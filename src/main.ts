@@ -7,24 +7,25 @@ async function bootstrap() {
 
   app.use(
     session({
+      name: 'sid',  // ⬅ cookie name
       secret: 'kElQAyEpvvFYU4jGJpkSwhgIwMyvrBcCHMhxPUTWeuPUOnfWCq',
       resave: false,
       saveUninitialized: false,
       cookie: {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false,       // ⬅ dev = false
+        sameSite: 'lax',
       },
     }),
   );
 
-app.enableCors({
-  origin: 'http://localhost:5173',  // React Vite
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-});
-
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  });
 
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 3000);

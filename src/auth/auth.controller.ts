@@ -1,4 +1,3 @@
-// src/auth/auth.controller.ts
 import { Controller, Post, Put, Body, Param, Session, Get, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -12,21 +11,23 @@ export class AuthController {
     const result = await this.authService.register(username, email, password);
     
     session.user = result.user;
+    session.save();  // <--- QUAN TRỌNG
     return result;
   }
 
-  @Post('login') 
+  @Post('login')
   async login(@Body() body: any, @Session() session: any) {
     const { email, password } = body;
     const result = await this.authService.login(email, password);
     
     session.user = result.user;
+    session.save(); // <--- QUAN TRỌNG
     return result;
   }
 
   @Post('logout')
   async logout(@Session() session: any) {
-    session.user = null;
+    session.destroy();  // <--- quan trọng hơn session.user = null
     return { message: 'Logged out successfully' };
   }
 
